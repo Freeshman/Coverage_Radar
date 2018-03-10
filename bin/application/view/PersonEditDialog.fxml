@@ -10,10 +10,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PersonEditDialogController">
+<BorderPane prefHeight="235.0" prefWidth="290.0" stylesheets="@DarkThem.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PersonEditDialogController">
    <center>
-      <GridPane BorderPane.alignment="CENTER">
+      <GridPane styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -43,7 +42,7 @@
       </GridPane>
    </center>
    <bottom>
-      <ButtonBar prefHeight="40.0" prefWidth="250.0" translateX="-20.0">
+      <ButtonBar prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #1d1d1d;" styleClass="context-menu" translateX="-20.0">
          <buttons>
           <Button mnemonicParsing="false" onAction="#handleOk" prefHeight="30.0" prefWidth="89.0" text="Ok" />
             <Button alignment="CENTER" contentDisplay="CENTER" minHeight="21.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="32.0" prefWidth="91.0" text="Cancel" textAlignment="CENTER">
