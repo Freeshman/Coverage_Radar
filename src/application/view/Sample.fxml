@@ -63,6 +63,6 @@
       </GridPane>
    </right>
    <center>
-      <WebView prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER" />
+      <WebView fx:id="mapWebView" prefHeight="200.0" prefWidth="600.0" styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
