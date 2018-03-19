@@ -1,5 +1,4 @@
 package application;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
@@ -18,6 +17,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import javafx.collections.*;
+import application.OurTiffReader.*;
+//import mil.nga.tiff.TiffReader;
+
 public class MainApp extends Application {
 
     private Stage primaryStage;
@@ -31,16 +33,7 @@ public class MainApp extends Application {
      * Constructor
      */
     public MainApp() {
-        // Add some sample data
-        personData.add(new Person("Hans", "Muster"));
-        personData.add(new Person("Ruth", "Mueller"));
-        personData.add(new Person("Heinz", "Kurz"));
-        personData.add(new Person("Cornelia", "Meier"));
-        personData.add(new Person("Werner", "Meyer"));
-        personData.add(new Person("Lydia", "Kunz"));
-        personData.add(new Person("Anna", "Best"));
-        personData.add(new Person("Stefan", "Meier"));
-        personData.add(new Person("Martin", "Mueller"));
+
     }
 
     /**
@@ -59,29 +52,10 @@ public class MainApp extends Application {
 
         initRootLayout();
 
-        showPersonOverview();
+        showMainPageOverview();
     }
 
-    /**
-     * Initializes the root layout.
-     */
-    /*
-    public void initRootLayout() {
-        try {
-            // Load root layout from fxml file.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
-//            loader.setLocation(MainApp.class.getResource("view/Sample.fxml"));
-            rootLayout = (BorderPane) loader.load();
 
-            // Show the scene containing the root layout.
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     /**
      * Initializes the root layout and tries to load the last opened
@@ -119,15 +93,14 @@ public class MainApp extends Application {
      * clicks OK, the changes are saved into the provided person object and true
      * is returned.
      *
-     * @param person the person object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showPersonEditDialog(Person person) {
+    public boolean showConfigurationDialog() {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
 
-            loader.setLocation(MainApp.class.getResource("view/PersonEditDialog.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/RadarEditDialog.fxml"));
             BorderPane page = (BorderPane) loader.load();
 
             // Create the dialog Stage.
@@ -139,9 +112,8 @@ public class MainApp extends Application {
             dialogStage.setScene(scene);
 
             // Set the person into the controller.
-            PersonEditDialogController controller = loader.getController();
+            RadarEditDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
-            controller.setPerson(person);
 
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
@@ -154,20 +126,19 @@ public class MainApp extends Application {
     }
 
     /**
-     * Shows the person overview inside the root layout.
+     * Shows the  overview inside the root layout.
      */
-    public void showPersonOverview() {
+    public void showMainPageOverview() {
         try {
             // Load person overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/Sample.fxml"));
-            BorderPane personOverview = (BorderPane) loader.load();
-
+            loader.setLocation(MainApp.class.getResource("view/MainPage.fxml"));
+            BorderPane MainPageOverview = (BorderPane) loader.load();
             // Set person overview into the center of root layout.
-            rootLayout.setCenter(personOverview);
+            rootLayout.setCenter(MainPageOverview);
 
          // Give the controller access to the main app.
-            PersonOverviewController controller = loader.getController();
+            MainPageOverviewController controller = loader.getController();
 
             controller.setMainApp(this);
 
@@ -216,12 +187,12 @@ public class MainApp extends Application {
             prefs.put("filePath", file.getPath());
 
             // Update the stage title.
-            primaryStage.setTitle("AddressApp - " + file.getName());
+//            primaryStage.setTitle("AddressApp - " + file.getName());
         } else {
             prefs.remove("filePath");
 
             // Update the stage title.
-            primaryStage.setTitle("AddressApp");
+//            primaryStage.setTitle("AddressApp");
         }
     }
     /**

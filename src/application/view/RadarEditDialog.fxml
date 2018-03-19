@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="background" stylesheets="@DarkThem.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.RadarEditDialogController">
+   <center>
+      <VBox prefHeight="198.0" prefWidth="246.0" BorderPane.alignment="CENTER">
+         <children>
+            <SplitPane dividerPositions="0.03225806451612903, 0.8299120234604106, 0.8885630498533724, 0.9472140762463344" orientation="VERTICAL" styleClass="background" stylesheets="@DarkThem.css">
+               <items>
+                  <Label alignment="CENTER" text="雷达配置">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <SplitPane dividerPositions="0.5" styleClass="background">
+                     <items>
+                        <Label styleClass="background" stylesheets="@DarkThem.css" text="经度:" textAlignment="CENTER" textFill="WHITE" />
+                        <TextField promptText="经度" style="-fx-background-color: #fff;" styleClass="background" />
+                     </items>
+                  </SplitPane>
+                  <SplitPane dividerPositions="0.5" styleClass="background">
+                     <items>
+                        <Label styleClass="background" text="纬度:" textAlignment="CENTER" textFill="WHITE" />
+                        <TextField promptText="纬度" style="-fx-background-color: #fff;" styleClass="background" />
+                     </items>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </SplitPane>
+                  <SplitPane dividerPositions="0.5" styleClass="background" stylesheets="@DarkThem.css">
+                     <items>
+                        <Label styleClass="background" text="高度:" textAlignment="CENTER" textFill="WHITE" />
+                        <TextField promptText="高度" style="-fx-background-color: #fff;" styleClass="background" />
+                     </items>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </SplitPane>
+                  <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" styleClass="background">
+                     <items>
+                        <Label styleClass="background" text="倾角:" textAlignment="CENTER" textFill="WHITE" />
+                        <TextField promptText="倾角" style="-fx-background-color: #fff;" styleClass="background" />
+                     </items>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </SplitPane>
+               </items>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </SplitPane>
+            <SplitPane dividerPositions="0.6" prefHeight="200.0" prefWidth="200.0" styleClass="background">
+               <items>
+                  <Label alignment="CENTER" contentDisplay="CENTER" styleClass="background" stylesheets="@DarkThem.css" text="雷达威力范围文件:">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" styleClass="background" text="雷达威力范围文件" />
+               </items>
+            </SplitPane>
+            <SplitPane dividerPositions="0.6" prefHeight="200.0" prefWidth="200.0" styleClass="background">
+               <items>
+                  <Label alignment="CENTER" contentDisplay="CENTER" styleClass="background" text="雷达波束文件:">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" styleClass="background" text="雷达波束文件">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+               </items>
+            </SplitPane>
+            <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@DarkThem.css">
+               <items>
+                  <Label alignment="CENTER" styleClass="background" text="雷达利用率:" />
+                  <Label alignment="CENTER" styleClass="background" text="雷达利用率:">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+               </items>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </SplitPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <ButtonBar prefHeight="71.0" prefWidth="390.0" styleClass="background" BorderPane.alignment="CENTER">
+        <buttons>
+            <Button mnemonicParsing="false" text="确认" />
+            <Button mnemonicParsing="false" text="取消" />
+        </buttons>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </ButtonBar>
+   </bottom>
+</BorderPane>
