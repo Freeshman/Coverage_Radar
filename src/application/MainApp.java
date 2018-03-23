@@ -17,7 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import javafx.collections.*;
-import application.OurTiffReader.*;
+//import application.OurTiffReader.*;
 //import mil.nga.tiff.TiffReader;
 
 public class MainApp extends Application {

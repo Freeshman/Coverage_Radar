@@ -4,7 +4,7 @@ public class Projection
 {
 	private  double longitude0;
 	private static  double latitude0;
-	private static double a;
+	private static double a,b;
 	private static  double e;
 	private static double l0;
 	private double phi0,phi1,phi2;
@@ -15,8 +15,13 @@ public class Projection
 	public Projection(double longitude,double latitude){
 			longitude0=longitude;
 			latitude0=latitude;
-			 a= 6378245; //demi grand axe de l'ellipsoide (m)
-	         e = 0.0818191910428; //première excentricité de l'ellipsoide
+
+			 a=6378140;
+
+
+//	         e = 0.016710219;
+//	         e = 0.000900000;
+	         e=0;
 	         l0 = (Math.PI / 180) * longitude0;
 	        phi0 = (Math.PI / 180) * latitude0; //latitude d'origine en radian
 	        phi1 = (Math.PI / 180) * 25; //1er parallele automécoïque
@@ -89,7 +94,7 @@ public class Projection
 	    	double theta=Math.atan(y/(r0-x));
 	    	double B0=Math.PI;
 	    	double B1=Math.PI/2-2*Math.atan(t*Math.pow((1 - e * Math.sin(B0)) / (1 + e * Math.sin(B0)), e / 2));
-	    	double epsilon=Math.pow(10,-20 );
+	    	double epsilon=Math.pow(10,-25 );
 	    	while(Math.abs(B0-B1)<epsilon){
 	    		B0=B1;
 	    		B1=Math.PI/2-2*Math.atan(t*Math.pow((1 - e * Math.sin(B0)) / (1 + e * Math.sin(B0)), e / 2));
@@ -99,7 +104,7 @@ public class Projection
 	    	double[] LB=new double[2];
 	    	LB[0]=L*180/Math.PI;
 	    	LB[1]=B1*180/Math.PI;
-	    	System.out.println("r="+r+" theta="+theta+" t="+t);
+//	    	System.out.println("r="+r+" theta="+theta+" t="+t);
 	    	return LB;
 	    }
 }
