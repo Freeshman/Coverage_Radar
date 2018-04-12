@@ -27,9 +27,9 @@ public class DynamicTiffReader {
 //		TifFileBuffer[count++]=
 	}
 	public  DynamicTiffReader(double longitude,double latitude) throws IOException {
-		TifFileBuffer=new String[7];
-		TiffReader=new OurTiffReader[7];
-		for(int i=0;i<7;i++){
+		TifFileBuffer=new String[10];
+		TiffReader=new OurTiffReader[10];
+		for(int i=0;i<10;i++){
 			TifFileBuffer[i]="";
 			TiffReader[i]=new OurTiffReader();
 		}
@@ -42,7 +42,9 @@ public class DynamicTiffReader {
 //		GetHeight(longitude, latitude);
 	}
 
-
+	public double GetHeightNonSence(double longitude,double latitude) {
+		return 0;
+	}
 	public double GetHeight(double longitude,double latitude) throws IOException {
 		String tmp=GetFileName(longitude, latitude);
 		int check = GetIndex(tmp);
@@ -55,9 +57,10 @@ public class DynamicTiffReader {
 		if(check==-1){
 //			System.out.println("Not load "+tmp);
 			index++;
-			if(index>7){
+			if(index>=10){
 //				count=5;
 				index=0;
+				System.out.println("Reuse the TiffReader\n");
 			}
 //			TiffReader[index]=new OurTiffReader();
 			TiffReader[index].loadDEM(tmp);
@@ -83,7 +86,7 @@ public class DynamicTiffReader {
 		Test();
 	}
 	public void FileName() {
-		for(int i=0;i<7;i++){
+		for(int i=0;i<10;i++){
 			if(!TifFileBuffer[i].isEmpty())System.out.println("We have "+TifFileBuffer[i]);
 		}
 	}
@@ -115,7 +118,7 @@ private static String GetFileName(double longitude,double latitude) {
 	return filename;
 }
 private int GetIndex(String check) {
-	for(int i=0;i<5;i++){
+	for(int i=0;i<10;i++){
 		if(TifFileBuffer[i].equals(check)==true){
 
 			return i;

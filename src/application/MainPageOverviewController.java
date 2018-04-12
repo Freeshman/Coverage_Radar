@@ -1,45 +1,57 @@
 package application;
-
+import cvrgController.CvrgController;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.web.WebEngine;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
 import javafx.scene.web.WebView;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
-import java.awt.geom.Point2D;
-import java.awt.print.Printable;
 import java.io.IOException;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import Lambert.Projection;
-import application.CoordinateSys;
 import TiffReader.DynamicTiffReader;
-import TiffReader.OurTiffReader;
 public class MainPageOverviewController {
+	@FXML
+	private ProgressIndicator progressMap;
+	@FXML
+	private ProgressBar progresBar;
+	@FXML
+	private Label realRadarHeight;
 	@FXML
 	private TextField longRadar;
 	@FXML
+	private TextField RadarHeight;
+	@FXML
+	private TextField RadarTil;
+	@FXML
+	private TextField FlightLevelInput;
+	@FXML
 	private TextField latRadar;
+	double HL,angle,dist,range,height_center,Til,height_real;
 	@FXML
 	private AnchorPane myAnchorPane;
 	@FXML
@@ -55,11 +67,16 @@ public class MainPageOverviewController {
 	@FXML
 	private BorderPane mainPage;
 	@FXML
-	private ImageView imageView;
+	private Canvas imageView;
     @FXML
     private WebView mapWebView;
+    @FXML
+    private Pane Key;
     // Reference to the main application.
     private MainApp mainApp;
+    private Polyline[] polyline ;
+    private int polylineIndex;
+    private Color[] colorBar;
     private double longitude_center;
     private double latitude_center;
     private double longitude1;
@@ -71,8 +88,10 @@ public class MainPageOverviewController {
     private double longitude4;
     private double latitude4;
     private double[][] P_lambert;
+    private DynamicTiffReader dynamicTiffReader_;
 //    private int[][] Pixel_map;
     private double coef;//鍦板浘鏀惧ぇ绯绘暟
+    private boolean finishflag;
     /*								 /\ xL
 	 * 0--------------------> y		  |
 	 * |  1-------------2			  |
@@ -93,24 +112,31 @@ public class MainPageOverviewController {
 	  double hv;
 	Projection projection;
 	DynamicTiffReader dynamicTiffReader;
+//	CvrgController cvrgController;
+
 //	private projectionHelper projection;
     /**
      * The constructor.
      * The constructor is called before the initialize() method.
      */
     public MainPageOverviewController() {
+		 HL = 2000;
+		 angle=0.5;
+		 range = 250000;
+		 height_center = 12;
+
     	windowHeight=400;
     	windowWidth=400;
     	 xv=0;
   	   yv=0;
   	   wv=0;
   	   hv=0;
+  	   Til=0;
 //  		latitude_center=39.1097618747;
 //  		longitude_center=117.3529134562;
-  		latitude_center=0;
-  		longitude_center=0;
+  		latitude_center=38.058942;
+  		longitude_center=106.2028889;
   		P_lambert=new double[4][2];
-
     }
 
     /**
@@ -124,18 +150,52 @@ public class MainPageOverviewController {
 
 
         // Listen for selection changes and show the person details when changed.
-  		Console.appendText("Hello\n");
-        WebEngine webEngine = new WebEngine();
-        webEngine=mapWebView.getEngine();
-        webEngine.load("http://uri.amap.com/marker?location="+"latitude=39.1097618747,"+"117.3529134562&title=SIAE&content=SIAE&output=html");
-        coefx=windowWidth/imageView.getFitWidth();
-    	coefy=windowHeight/imageView.getFitHeight();
-    	coef=500;
-    	projection=new Projection(117.25,39.25);
-		 dynamicTiffReader=new DynamicTiffReader(117.25, 39.25);
-    	UpdatePostion(117.25,39.25,coef);
-		System.out.println(" "+longitude_center+"    "+latitude_center);
-   		mapWebView.setVisible(false);
+//  		Console.appendText("Hello\n");
+    	  progresBar.setVisible(false);
+    	  progressMap.setVisible(false);
+  		FlightLevelInput.setText(String.valueOf(HL));
+  		RadarHeight.setText(String.valueOf(height_center));
+  	    RadarTil.setText(String.valueOf(Til));
+  	    longRadar.setText(String.valueOf(longitude_center));
+  	    latRadar.setText(String.valueOf(latitude_center));
+//        WebEngine webEngine = new WebEngine();
+//        webEngine=mapWebView.getEngine();
+//        webEngine.load("http://uri.amap.com/marker?location="+"latitude=39.1097618747,"+"117.3529134562&title=SIAE&content=SIAE&output=html");
+  	  imageView.setHeight(windowHeight);
+  	  imageView.setWidth(windowWidth);
+        coefx=windowWidth/imageView.getWidth();
+    	coefy=windowHeight/imageView.getHeight();
+    	coef=1000;
+    	projection=new Projection(longitude_center,latitude_center);
+    	polyline=new Polyline[2];
+    	polylineIndex=0;
+    	colorBar=new Color[5];
+    	colorBar[0]=new Color(0, 0, 1, 1);
+    	colorBar[1]=new Color(0, 1, 1, 1);
+    	colorBar[2]=new Color(0, 0, 1, 1);
+    	colorBar[3]=new Color(0.5, 0.5, 1, 1);
+    	colorBar[4]=new Color(0, 0, 0, 1);
+    	try {
+			dynamicTiffReader=new DynamicTiffReader(longitude_center,latitude_center );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		System.out.println(" "+longitude_center+"    "+latitude_center);
+//   		mapWebView.setVisible(false);
+   		double tmp=dynamicTiffReader.GetHeight(longitude_center, latitude_center);
+		if(tmp<0)tmp=0;
+		height_real=height_center+tmp;
+//		realRadarHeight.setText(String.valueOf(height_real));
+		/*
+		 * Here set longitude and latitude =0 is to refresh the map!!!!!
+		 *
+		 */
+		longitude_center=0;
+		latitude_center=0;
+		finishflag=true;
+		UpdatePostion(longitude_center,latitude_center,coef);
 
 //        mainPage.setCenter(imageView);
     }
@@ -143,7 +203,8 @@ public class MainPageOverviewController {
     	/*
 		 * Four points of the window in Lambert coordinate system
 		 */
-
+    	Console.appendText("coef= "+coef);
+    	if(finishflag==true)
     	if(Newcoef!=coef|Newlongitude!=longitude_center|Newlatitude!=latitude_center){
         	longitude_center=Newlongitude;
         	latitude_center=Newlatitude;
@@ -189,7 +250,17 @@ public class MainPageOverviewController {
 //  		System.out.println(longitude3+", "+latitude3);
 //  		System.out.println(longitude4+", "+latitude4);
 //  		System.out.println("");
-
+  		try {
+			dynamicTiffReader=new DynamicTiffReader(longitude_center,latitude_center );
+			double tmp_=dynamicTiffReader.GetHeight(longitude_center, latitude_center);
+			if(tmp_<0)tmp_=0;
+			height_real=height_center+tmp_;
+			realRadarHeight.setText(String.valueOf(height_real));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	show_DEM();
     	}
 	}
 
@@ -234,7 +305,7 @@ public class MainPageOverviewController {
 //  		System.out.println("newcoef="+Newcoef);
 //  		System.out.println("");
     	UpdatePostion(longitude_center, latitude_center, Newcoef);
-    	show_DEM();
+
     }
 
 
@@ -242,106 +313,210 @@ public class MainPageOverviewController {
     private void PickPosition(MouseEvent e) throws IOException{
 //    	CoordinateSys coordinateSys=new CoordinateSys();
 //    	coordinateSys.test();
+        if(finishflag==true){
     		MouseButton button = e.getButton();
             switch(button) {
               case PRIMARY:
-//            	  Console.appendText("x="+String.valueOf(e.getX()));
-//            	  Console.appendText("y="+String.valueOf(e.getY()));
+//            	  windowWidth=(int) imageView.getHeight();
+//            	  windowHeight=(int) imageView.getHeight();
+
+//            	  Console.appendText("h="+windowWidth+"\n");
+//            	  Console.appendText("w="+windowHeight+"\n");
+//            	  Console.appendText("x="+String.valueOf(e.getX())+"\n");
+//            	  Console.appendText("y="+String.valueOf(e.getY())+"\n");
 //            	  System.out.println("x="+e.getX()+" y="+e.getY());
-            	  double NewPosition_Ly=(50*e.getX()-windowWidth/2.0);
-            	  double NewPosition_Lx=-(50*e.getY()-windowHeight/2.0);
+            	  double NewPosition_Ly=coef*(e.getX()-windowWidth/2.0);
+            	  double NewPosition_Lx=-coef*(e.getY()-windowHeight/2.0);
             	  longPoint.setText(String.valueOf(NewPosition_Ly));
             	  latPoint.setText(String.valueOf(NewPosition_Lx));
-//            	  System.out.println("NewPosiont="+-(e.getX()-windowHeight/2.0)+", "+(e.getY()-windowWidth/2.0));
-//            	  System.out.println("NewPosiont="+NewPosition_Lx+", "+NewPosition_Ly);
-//            	  double[] check=projection.Lambert2WGS84(0, 0);
-//            	  System.out.println("Check="+check[0]+", "+check[1]);
             	  double[] NewLB=projection.Lambert2WGS84(NewPosition_Lx, NewPosition_Ly);
 //            	  System.out.println("So ="+NewLB[0]+", "+NewLB[1]);
             	  UpdatePostion(NewLB[0],NewLB[1],coef);
-            	  show_DEM();
             	  break;
-              case SECONDARY:
-            	  UpdatePostion(115.1, 40.1, 100);
-            	  show_DEM();
+              case SECONDARY://右键
+//            	  UpdatePostion(115.1, 40.1, 100);
             	  break;
             }
+        }
 //             	 System.out.println("Point latitude:" + pt.getY() + " longitude:" + pt.getX());
 
 
     }
     @FXML
     private void Test() throws IOException{
-        dynamicTiffReader.FileName();
+//        dynamicTiffReader.FileName();
+//        GraphicsContext gc=imageView.getGraphicsContext2D();
+//      gc.clearRect(0, 0, windowWidth, windowHeight);
+    	Range();
+
     }
     @FXML
     private void show_DEM() throws IOException{
-   /*
-        6000*6000
+    	finishflag=false;
+    	dynamicTiffReader_=new DynamicTiffReader(longitude_center, latitude_center);
+    	if(polyline[0]!=null)Key.getChildren().remove(polyline[0]);
+    	 Range();
+    	 Task<Integer> task = new Task<Integer>() {
+     		 private int col,row;
+     		 private int Height;
+     		 private WritableImage img;
+ 	      	  private Color color;
+    		    @Override protected Integer call() throws Exception {
+    		    	 progressMap.setVisible(true);
+    		    	img=new WritableImage(windowHeight, windowWidth);
+    		    	PixelWriter pw=img.getPixelWriter();
+    	                for( row=(int) P_lambert[0][1];row!=(int)P_lambert[1][1];row+=2*coef){//x
+    	                	for( col=(int)P_lambert[0][0];col!=(int)P_lambert[3][0];col-=coef){//y
+    	                		 projection=new Projection(longitude_center,latitude_center);
+    	      	               double[] result=projection.Lambert2WGS84(-row, -col);
+    	      	              		try {
+    									Height =(int) dynamicTiffReader_.GetHeight(result[0], result[1]);
+    								} catch (IOException e) {
+    									// TODO Auto-generated catch block
+    									e.printStackTrace();
+    								}
+    	      	              		 color=ColorMap(Height, 950);
+    	      	            		if((row/coef*row/coef+col/coef*col/coef)==50){
+    	      	            			if(color.getBrightness()>0.5){
+    	      	            				if(color.getBlue()>0.5)
+    	      	            			color= new Color(1,1,1,1);
+    	      	            				else color= new Color(0,0,0,1);
+    	      	            			}
+    	      	            			else if (color.getBrightness()<0.5)
+    	      	        				color =new Color(1, 1, 1, 1);
+    	      	            		}
+	        	    	            int i=(int) ((row-(int)P_lambert[0][1])/coef);
+	        	    	       		  int  j=-(int) ((col-(int)P_lambert[0][0])/coef);
+	        	    	       		  updateProgress(i+1, windowHeight);
 
-        鍖楃含60搴﹁嚦鍗楃含60搴�
-        3' 90m
-        longitude:-180
-        latitude:60
-        60_05:
-        (n-1)*5-180=115
-        60-(n-1)*5=40
-        */
-//        /*
-        WritableImage writableImage = new WritableImage(windowHeight,windowWidth);
-        PixelWriter pw = writableImage.getPixelWriter();
+	      	    	            	pw.setColor(j, i, color);
 
-         projection=new Projection(longitude_center,latitude_center);
+//	        	    	       		Platform.runLater(() -> {
+//       	    	       	         progressMap.setProgress((i+1)/400.0);
+//       	    	       	    });
+    	                	}
+    	                	Platform.runLater(() -> {
+        	    	       	    GraphicsContext gc=imageView.getGraphicsContext2D();
+        	      		        gc.drawImage(img, 0, 0);
+        	    	       	    });
+    	                }
+    	                	 for( row=(int)( P_lambert[0][1]+coef);row!=(int)P_lambert[1][1]-coef;row+=2*coef){//x
+    	    	                	for( col=(int)P_lambert[0][0];col!=(int)P_lambert[3][0];col-=coef){//y
+    	    	                		 projection=new Projection(longitude_center,latitude_center);
+    	    	      	               double[] result=projection.Lambert2WGS84(-row, -col);
+    	    	      	              		try {
+    	    									Height =(int) dynamicTiffReader_.GetHeight(result[0], result[1]);
+    	    								} catch (IOException e) {
+    	    									// TODO Auto-generated catch block
+    	    									e.printStackTrace();
+    	    								}
+    	    	      	              		 color=ColorMap(Height, 950);
+    	    	      	            		if((row/coef*row/coef+col/coef*col/coef)==50){
+    	    	      	            			if(color.getBrightness()>0.5){
+    	    	      	            				if(color.getBlue()>0.5)
+    	    	      	            			color= new Color(1,1,1,1);
+    	    	      	            				else color= new Color(0,0,0,1);
+    	    	      	            			}
+    	    	      	            			else if (color.getBrightness()<0.5)
+    	    	      	        				color =new Color(1, 1, 1, 1);
+    	    	      	            		}
+    		        	    	            int i=(int) ((row-(int)P_lambert[0][1])/coef);
+    		        	    	       		  int  j=-(int) ((col-(int)P_lambert[0][0])/coef);
+    		        	    	       		  updateProgress(i+1, windowHeight);
+    		      	    	            	pw.setColor(j, i, color);
+    	    	                	}
+    	            	Platform.runLater(() -> {
+    	    	       	    GraphicsContext gc=imageView.getGraphicsContext2D();
+    	      		        gc.drawImage(img, 0, 0);
+    	    	       	    });
+    	    			}
+    		        return 0;
+    		    }
+
+    		    @Override protected void succeeded() {
+    		        super.succeeded();
+   		    	 progressMap.setVisible(false);
+
+    		        updateMessage("Done!");
+    		    }
+
+    		    @Override protected void cancelled() {
+    		        super.cancelled();
+    		        updateMessage("Cancelled!");
+    		    }
+
+    		@Override protected void failed() {
+    		    super.failed();
+    		    updateMessage("Failed!");
+    		    }
+    		};
+
+
+	      	Thread thread =new Thread(task);
+	      	progressMap.progressProperty().bind(task.progressProperty());
+	      	thread.start();
+    	}
 
 
 
 
-//        int row=tiffReader.pixelx(latitude1);////////////Fuck!!!!
-//        int col=tiffReader.pixely(longitude1);
 
-//        System.out.println("row="+row+" col="+col);
-//        for(int row=tiffReader.pixelx(latitude1);row<tiffReader.pixelx(latitude4);row++){
-//        	for(int col=tiffReader.pixely(longitude1);col<tiffReader.pixely(longitude2);col++){
-//         double[] checkd=projection.Lambert2WGS84(-(int) P_lambert[0][1], -(int)P_lambert[0][0]);
-//         String debug="P0 position="+checkd[0]+","+checkd[1]+"\n";
-//         Console.appendText(debug);
-                for(int row=(int) P_lambert[0][1];row!=(int)P_lambert[1][1];row+=coef){//x
-//                	row=tiffReader.pixelx(latitude1);
-                	for(int col=(int)P_lambert[0][0];col!=(int)P_lambert[3][0];col-=coef){//y
-//                        System.out.println("hello");
-                		double[] result=projection.Lambert2WGS84(-row, -col);
-//                		System.out.println("-row and -col="+-row+", "+-col);
-//                		double[] result=projection.Lambert2WGS84(row*coef, col*coef);
 
-//        		System.out.println("long1="+longitude1+" lat1="+latitude1);
-//        		System.out.println("long="+longitude+" lat="+latitude);
-//        		System.out.println((int)P_lambert[0][1]+" "+P_lambert[0][0]);
-        		int i=(int) ((row-(int)P_lambert[0][1])/coef);
-        		int j=-(int) ((col-(int)P_lambert[0][0])/coef);
-//                System.out.println("i="+i+" j="+j);
-//                System.out.println(" i="+i+" j="+j);
-
-//                Console.appendText("row="+row+" col="+col+"\n");
-//                Console.appendText(result[0]+" ,"+result[1]+"\n");
-//                System.out.println(ColorMap(tiffReader.getPixel(row,col),950).getRed()+" "+ColorMap(tiffReader.getPixel(row,col),950).getGreen()+" "+ColorMap(tiffReader.getPixel(row,col),950).getBlue());
-//        		ColorMap(, 950);
-        		int check =(int) dynamicTiffReader.GetHeight(result[0], result[1]);
-//        		Console.appendText(check+"\n");
-        		pw.setColor(j, i, ColorMap(check, 950));
-        	}
-//                  System.out.println("row0="+(int) P_lambert[0][0]+" rowend="+(int)P_lambert[3][0]);
-//                  System.out.println("col0="+(int)P_lambert[0][1]+" colend="+(int)P_lambert[1][1]);
-//        	k++;
+private void  Range() {
+    Task<Void> progressTask = new Task<Void>(){
+    	  private Polyline tmp;
+        @Override
+        protected void succeeded() {
+            super.succeeded();
+            System.out.println("Succeeded");
+            polyline[0]=tmp;
+            Key.getChildren().add(tmp);
+            progresBar.setVisible(false);
+            finishflag=true;
         }
-//                checkd=projection.Lambert2WGS84(-(int) P_lambert[1][1], -(int)P_lambert[3][0]);
-//                debug="P1 position="+checkd[0]+","+checkd[1]+"\n";
-//                Console.appendText(debug);
 
-        imageView.setImage(writableImage);
-//        */
-//    	imageView.setVisible(true);
-//        mainPage.setCenter(imageView);
-    }
+        @Override
+        protected void cancelled() {
+            super.cancelled();
+            System.out.println("Cancelled");
+        }
+
+        @Override
+        protected void failed() {
+            super.failed();
+            System.out.println("Failed");
+        }
+        @Override
+        protected Void call() throws Exception {
+    	 	progresBar.setVisible(true);
+            CvrgController cvrgController=new CvrgController();
+        	int N = 2777;
+    	 	double dist = Math.floor(range/N);//8.25
+    	 	tmp=new Polyline();
+    	 	Double[] points=new Double[2*(int)(360.0/angle)];
+        for(int k=0;k<(int)360.0/angle;k++) {
+        	updateProgress(k + 1, (int)360.0/angle);
+//            System.out.println("Loading..." + (k + 1) + "%");
+        	double[]tmp_LB=cvrgController.start(N,dynamicTiffReader,latitude_center,longitude_center,height_real,angle*k,dist,range,HL);
+        	double[]tmp_Lambert=projection.WGS842Lambert(tmp_LB[0], tmp_LB[1]);
+        	if(tmp_Lambert[0]<=P_lambert[0][0]&&tmp_Lambert[0]>=P_lambert[3][0]&&tmp_Lambert[1]>=P_lambert[0][1]&&tmp_Lambert[1]<=P_lambert[1][1]){
+        	int i=(int) ((tmp_Lambert[1]-(int)P_lambert[0][1])/coef);
+        	int j=-(int) ((tmp_Lambert[0]-(int)P_lambert[0][0])/coef);
+    		points[2*k]=Double.valueOf(i);
+    		points[2*k+1]=Double.valueOf(j);
+    		}
+        }
+        	tmp.getPoints().addAll(points);
+           	tmp.setStroke(colorBar[polylineIndex]);
+//            System.out.println("Finish");
+            return null;
+        }
+  };
+  		progresBar.progressProperty().bind(progressTask.progressProperty());
+	 	new Thread(progressTask).start();
+
+
+}
     private Color ColorMap(double d,float average){
     	float r,g,b;
     	float Max=2*average;
@@ -411,4 +586,118 @@ public class MainPageOverviewController {
     private void handleConfiguration() {
          boolean okClicked = mainApp.showConfigurationDialog();
         }
+    @FXML
+    private void handleNewLocation(){
+    	try {
+			UpdatePostion(Double.valueOf(longRadar.getText()).doubleValue(), Double.valueOf(latRadar.getText()).doubleValue(), coef);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    @FXML
+    private void handleStartDrag(MouseEvent e)throws IOException{
+//    	System.out.println("start drag");
+     if(finishflag==true){
+  	  double NewPosition_Ly=-coef*(e.getX()-windowWidth/2.0);
+  	  double NewPosition_Lx=coef*(e.getY()-windowHeight/2.0);
+  	  longPoint.setText(String.valueOf(NewPosition_Ly));
+  	  latPoint.setText(String.valueOf(NewPosition_Lx));
+  	  double[] NewLB=projection.Lambert2WGS84(NewPosition_Lx, NewPosition_Ly);
+  	  UpdatePostion(NewLB[0],NewLB[1],coef);
+     }
+    }
+    @FXML
+    private void handleExit(){
+    	System.exit(0);
+    }
+    @FXML
+    private void UpdateFL(KeyEvent e){
+        if(finishflag==true){
+    	if(e.getCode()==KeyCode.ENTER){
+    	HL=Double.valueOf(FlightLevelInput.getText()).doubleValue();
+    	try {
+			show_DEM();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+//    	System.out.println("HL="+HL);
+    	}
+        }
+    }
+    @FXML
+    private void handleLongChanged(KeyEvent e){
+        if(finishflag==true){
+    	if(e.getCode()==KeyCode.ENTER){
+        	try {
+				UpdatePostion(Double.valueOf(longRadar.getText()).doubleValue(), latitude_center, coef);
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    		}
+        }
+    }
+    @FXML
+    private void handleLatChanged(KeyEvent e){
+        if(finishflag==true){
+    	if(e.getCode()==KeyCode.ENTER){
+        	try {
+				UpdatePostion(longitude_center, Double.valueOf(latRadar.getText()).doubleValue(), coef);
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    }
+        }
+    }
+    @FXML
+    private void handleHeightChanged(KeyEvent e){
+        if(finishflag==true){
+    	if(e.getCode()==KeyCode.ENTER){
+    		try {
+    			dynamicTiffReader=new DynamicTiffReader(longitude_center,latitude_center );
+    			height_center=Double.valueOf(RadarHeight.getText()).doubleValue();
+    			Console.appendText("Height_center"+height_center);
+    			double tmp=dynamicTiffReader.GetHeight(longitude_center, latitude_center);
+    			if(tmp<0)tmp=0;
+    			height_real=height_center+tmp;
+    			realRadarHeight.setText(String.valueOf(height_real));
+    		} catch (IOException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+    		try {
+				show_DEM();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    	}
+        }
+    }
+    @FXML
+    private void handleTilChanged(KeyEvent e){
+        if(finishflag==true){
+    	if(e.getCode()==KeyCode.ENTER){
+    		Til=Double.valueOf(RadarTil.getText()).doubleValue();
+    		try {
+				show_DEM();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    }
+    }
+    }
 }
