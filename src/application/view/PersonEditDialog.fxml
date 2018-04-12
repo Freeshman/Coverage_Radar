@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="235.0" prefWidth="290.0" stylesheets="@DarkThem.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PersonEditDialogController">
+<BorderPane prefHeight="235.0" prefWidth="290.0" stylesheets="@DarkThem.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.RadarEditDialogController">
    <center>
       <GridPane styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER">
         <columnConstraints>

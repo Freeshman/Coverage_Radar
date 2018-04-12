@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -27,7 +29,8 @@ public class PersonOverviewController {
     private Label cityLabel;
     @FXML
     private Label birthdayLabel;
-
+    @FXML
+    private WebView mapWebView;
     // Reference to the main application.
     private MainApp mainApp;
 
@@ -53,6 +56,12 @@ public class PersonOverviewController {
         // Listen for selection changes and show the person details when changed.
         personTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showPersonDetails(newValue));
+
+        WebEngine webEngine = new WebEngine();
+        webEngine=mapWebView.getEngine();
+//        webEngine.load("https://map.baidu.com/");
+        webEngine.load("http://api.map.baidu.com/marker?location=39.916979519873,116.41004950566&title=我的位置&content=百度奎科大厦&output=html");
+
     }
 
     /**
