@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainPage" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@DarkThem.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainPageOverviewController">
+   <right>
+      <AnchorPane styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+         <children>
+            <StackPane styleClass="background" stylesheets="@DarkThem.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" styleClass="background" stylesheets="@DarkThem.css">
+                    <items>
+                        <VBox fx:id="myBox" styleClass="background" stylesheets="@DarkThem.css">
+                           <children>
+                              <SplitPane dividerPositions="0.5" styleClass="background">
+                                 <VBox.margin>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </VBox.margin>
+                                 <items>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" text="高度层：FL" />
+                                    <TextField fx:id="FlightLevelInput" onKeyPressed="#UpdateFL" style="-fx-background-color: #fff;" text="300" />
+                                 </items>
+                              </SplitPane>
+                              <VBox styleClass="background">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" text="雷达信息" textAlignment="CENTER">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <SplitPane dividerPositions="0.5" styleClass="background">
+                                       <items>
+                                          <Label styleClass="background" stylesheets="@DarkThem.css" text="经度:" textAlignment="CENTER" textFill="WHITE" />
+                                          <TextField fx:id="longRadar" onKeyPressed="#handleLongChanged" promptText="经度" style="-fx-background-color: #fff;" styleClass="background" text="39.1097618747" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                    <SplitPane dividerPositions="0.5" styleClass="background">
+                                       <items>
+                                          <Label styleClass="background" text="纬度:" textAlignment="CENTER" textFill="WHITE" />
+                                          <TextField fx:id="latRadar" onKeyPressed="#handleLatChanged" promptText="纬度" style="-fx-background-color: #fff;" styleClass="background" text="117.3529134562" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                    <SplitPane dividerPositions="0.5" styleClass="background" stylesheets="@DarkThem.css">
+                                       <items>
+                                          <Label styleClass="background" text="高度:" textAlignment="CENTER" textFill="WHITE" />
+                                          <TextField fx:id="RadarHeight" onKeyPressed="#handleHeightChanged" promptText="高度" style="-fx-background-color: #fff;" styleClass="background" text="10" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                    <SplitPane dividerPositions="0.5" styleClass="background">
+                                       <items>
+                                          <Label styleClass="background" text="倾角:" textAlignment="CENTER" textFill="WHITE" />
+                                          <TextField fx:id="RadarTil" onKeyPressed="#handleTilChanged" promptText="倾角" style="-fx-background-color: #fff;" styleClass="background" text="0" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </VBox>
+                              <SplitPane dividerPositions="0.5" styleClass="background">
+                                 <items>
+                                    <Label text="雷达实际高度:" />
+                                    <Label fx:id="realRadarHeight" contentDisplay="CENTER" text="Unknow" />
+                                 </items>
+                              </SplitPane>
+                              <Button fx:id="NewLocation" mnemonicParsing="false" onAction="#handleNewLocation" text="更新雷达位置" textAlignment="CENTER" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="6.0" />
+                                 </font>
+                              </Button>
+                              <VBox fx:id="Todo2" alignment="CENTER" styleClass="background">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" text="特定点" textAlignment="CENTER" textFill="WHITE" />
+                                    <SplitPane dividerPositions="0.5" styleClass="background">
+                                       <items>
+                                          <Label styleClass="background" stylesheets="@DarkThem.css" text="经度:" textAlignment="CENTER" textFill="WHITE">
+                                             <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="longPoint" promptText="经度" style="-fx-background-color: #fff;" styleClass="background" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                    <SplitPane dividerPositions="0.5" styleClass="background">
+                                       <items>
+                                          <Label styleClass="background" text="纬度:" textAlignment="CENTER" textFill="WHITE">
+                                             <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="latPoint" promptText="纬度" style="-fx-background-color: #fff;" styleClass="background" />
+                                       </items>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </SplitPane>
+                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="background" text="给出判断" textAlignment="CENTER">
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <SplitPane fx:id="Todo3" dividerPositions="0.5" styleClass="background">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <items>
+                                    <Label alignment="CENTER" text="实际覆盖面积:" />
+                                    <Label fx:id="lastNameLabel" text="realArea" textAlignment="CENTER" />
+                                 </items>
+                              </SplitPane>
+                              <SplitPane fx:id="Todo4" dividerPositions="0.5" styleClass="background">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <items>
+                                    <Label alignment="CENTER" text="雷达利用率:" />
+                                    <Label fx:id="birthdayLabel" text="efficient" textAlignment="CENTER" />
+                                 </items>
+                              </SplitPane>
+                              <SplitPane fx:id="Todo5" dividerPositions="0.5" styleClass="background">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <items>
+                                    <Label alignment="CENTER" text="理想覆盖面积:" />
+                                    <Label fx:id="firstNameLabel" text="idealArea" textAlignment="CENTER" textFill="WHITE" />
+                                 </items>
+                              </SplitPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                        <CheckBox fx:id="Todo1" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="background" text="显示影响地物" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </CheckBox>
+                    </items>
+                  </SplitPane>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+   </right>
+   <center>
+      <AnchorPane fx:id="KKK" styleClass="background" stylesheets="@DarkThem.css" BorderPane.alignment="CENTER">
+         <children>
+            <StackPane fx:id="Key" layoutX="10.0" layoutY="10.0" styleClass="background" stylesheets="@DarkThem.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Canvas fx:id="imageView" height="600.0" onMouseClicked="#PickPosition" onScroll="#handleScroll" styleClass="background" width="600.0">
+                     <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin></Canvas>
+               </children>
+            </StackPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </AnchorPane>
+   </center>
+   <top>
+      <AnchorPane styleClass="background" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ButtonBar buttonMinWidth="170.0" prefHeight="58.0" prefWidth="1019.0" styleClass="background">
+                    <buttons>
+                        <ProgressIndicator fx:id="progressMap" opacity="0.91" progress="0.0" style="-fx-background-color: #fff;" styleClass="background">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </ProgressIndicator>
+                      <Button fx:id="radarConfiguration" mnemonicParsing="false" onAction="#handleConfiguration" text="雷达配置">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleExit" text="退出">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Button>
+                        <ProgressBar fx:id="progresBar" opacity="0.85" progress="0.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </ProgressBar>
+                        <TextArea fx:id="Console" prefHeight="600.0" prefWidth="198.0" style="-fx-background-color: #000;" styleClass="background" stylesheets="@DarkThem.css" wrapText="true">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </TextArea>
+                    </buttons>
+                  </ButtonBar>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>

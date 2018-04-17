@@ -1,6 +1,8 @@
 package application;
 import java.time.LocalDate;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -106,9 +108,9 @@ public class Person {
         return city;
     }
 
-    public LocalDate getBirthday() {
-        return birthday.get();
-    }
+//    public LocalDate getBirthday() {
+//        return birthday.get();
+//    }
 
     public void setBirthday(LocalDate birthday) {
         this.birthday.set(birthday);
@@ -116,5 +118,9 @@ public class Person {
 
     public ObjectProperty<LocalDate> birthdayProperty() {
         return birthday;
+    }
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    public LocalDate getBirthday() {
+        return birthday.get();
     }
 }
