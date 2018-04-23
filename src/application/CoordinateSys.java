@@ -163,24 +163,21 @@ public double[] NEU2ECEF(double N,double E,double U,double x0,double y0,double z
 		return LONGa/Math.sqrt(1-e*e*Math.sin(Phi)*Math.sin(Phi));
 	}
 	public double[] NEU2JWH(double N,double E,double U,double CL,double CB,double CH) {
-		CL = CL*Math.PI/180;CB = CB*Math.PI/180;CH = CH*Math.PI/180;
+		CL = CL*Math.PI/180;CB = CB*Math.PI/180;
 		double[] center=JWH2ECEF(CL, CB, CH);
 		double[] ECEFS = NEU2ECEF(N, E, U,center[0],center[1],center[2]);
 		double[] JWHS = ECEF2JWH(ECEFS[0],ECEFS[1],ECEFS[2]);		
-		JWHS[0] = JWHS[0]*180/Math.PI;JWHS[1] = JWHS[1]*180/Math.PI;JWHS[2] = JWHS[2]*180/Math.PI;  
+		JWHS[0] = JWHS[0]*180/Math.PI;JWHS[1] = JWHS[1]*180/Math.PI; 
 		return JWHS;
 	}
 	public double[] JWH2NEU(double L,double B,double H,double CL,double CB,double CH) {
-		L = L*Math.PI/180;B = B*Math.PI/180;H = H*Math.PI/180;
-		CL = CL*Math.PI/180;CB = CB*Math.PI/180;CH = CH*Math.PI/180;
+		L = L*Math.PI/180;B = B*Math.PI/180;
+		CL = CL*Math.PI/180;CB = CB*Math.PI/180;
 		double[] center=JWH2ECEF(CL, CB, CH);
-		System.out.println("Cx="+center[0]+"Cy="+center[1]+"Cz="+center[2]);
 		
 		double[] JWHS=JWH2ECEF(L, B, H);
-		System.out.println("x="+JWHS[0]+"y="+JWHS[1]+"z="+JWHS[2]);
 		
 		double[] NEUresult2=ECEF2NEU(JWHS[0],JWHS[1],JWHS[2],center[0],center[1],center[2]);
-		System.out.println("N="+NEUresult2[0]+"E="+NEUresult2[1]+"U="+NEUresult2[2]);
 		return NEUresult2;
 	}
 }

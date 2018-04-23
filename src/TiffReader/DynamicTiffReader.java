@@ -11,6 +11,7 @@ import java.text.Format;
 import com.sun.javafx.scene.EnteredExitedHandler;
 
 
+
 /**
  * @author hu-tom
  *
@@ -44,36 +45,30 @@ public class DynamicTiffReader {
 	public double GetHeightNonSence(double longitude,double latitude) {
 		return 0;
 	}
-	public double GetHeight(double longitude,double latitude) throws IOException {
+	public synchronized double  GetHeight(double longitude,double latitude) throws IOException {
 		String tmp=GetFileName(longitude, latitude);
 		int check = GetIndex(tmp);
+		//==================DEBUG Start===================
 //		for(int i=0;i<5;i++)
 //			if(!TifFileBuffer[i].isEmpty()){
 ////				System.out.println("Position="+longitude+", "+latitude);
 //			System.out.println("you want "+tmp+" we had "+TifFileBuffer[i]+" and the check="+check);
 //			}
 //		System.out.println("Index="+index);
+		//==================DEBUG End===================
 		if(check==-1){
 //			System.out.println("Not load "+tmp);
 			index++;
 			if(index>=10){
-//				count=5;
 				index=0;
-				System.out.println("Reuse the TiffReader\n");
 			}
-//			TiffReader[index]=new OurTiffReader();
 			TiffReader[index].loadDEM(tmp);
 			TifFileBuffer[index]=tmp;
-//			System.out.println("current filename="+TifFileBuffer[index]);
-
-			return TiffReader[index].getPixel(TiffReader[index].pixelx(longitude), TiffReader[index].pixely(latitude));
+			double height=TiffReader[index].getPixel(TiffReader[index].pixelx(longitude), TiffReader[index].pixely(latitude));
+			return height<0?0:height;
 		}else{
-//			System.out.println("check="+check);
-//			System.out.println("wo ca="+TiffReader[check].getPixel(TiffReader[check].pixelx(longitude), TiffReader[check].pixely(latitude)));
-//			if(check==1)
-//				return TiffReader[1].getPixel(TiffReader[1].pixelx(longitude), TiffReader[1].pixely(latitude));
-//			else
-		return TiffReader[check].getPixel(TiffReader[check].pixelx(longitude), TiffReader[check].pixely(latitude));
+			double height=TiffReader[check].getPixel(TiffReader[check].pixelx(longitude), TiffReader[check].pixely(latitude));
+			return height<0?0:height;
 		}
 	}
 	/**
@@ -100,33 +95,28 @@ public static void Test() throws IOException {
 	System.out.println("");
 	OurTiffReader TiffReader=new OurTiffReader();
 	TiffReader.loadDEM(GetFileName(117.35,37.26));
-//	TiffReader.loadDEM("srtm_60_05.tif");
 
 }
-private static String GetFileName(double longitude,double latitude) {
-	String filename="srtm_";
-	if(latitude<-60|latitude>60){
-		System.out.println("Latitude overange!");
-		return "";
-	}
-	int nLong=(int)((longitude+180)/5.0)+1;
-	int nLat=(int)((60-latitude)/5.0)+1;
-	DecimalFormat form= new DecimalFormat("00");
-	filename+=form.format(nLong)+"_"+form.format(nLat)+".tif";
-//	System.out.println("you need "+filename);
-	return filename;
-}
-private int GetIndex(String check) {
-	for(int i=0;i<10;i++){
-		if(TifFileBuffer[i].equals(check)==true){
-
-			return i;
+	private static String GetFileName(double longitude,double latitude) {
+		String filename="srtm_";
+		if(latitude<-60|latitude>60){
+			System.out.println("Latitude overange!");
+			return "";
 		}
+		int nLong=(int)((longitude+180)/5.0)+1;
+		int nLat=(int)((60-latitude)/5.0)+1;
+		DecimalFormat form= new DecimalFormat("00");
+		filename+=form.format(nLong)+"_"+form.format(nLat)+".tif";
+		//System.out.println("you need "+filename);
+		return filename;
 	}
-//	for(int i=0;i<50;i++){
-//		System.out.println(" ");
-//		System.out.println("you want "+check+" we had "+TifFileBuffer[i]);
-//}
-	return -1;
-}
+	private int GetIndex(String check) {
+		for(int i=0;i<10;i++){
+			if(TifFileBuffer[i].equals(check)==true){
+
+				return i;
+			}
+		}
+		return -1;
+	}
 }

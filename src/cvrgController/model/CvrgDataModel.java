@@ -1,5 +1,8 @@
 package cvrgController.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import application.CoordinateSys;
 
 public class CvrgDataModel {
@@ -12,6 +15,7 @@ public class CvrgDataModel {
 	public int N;
 	double converageAngle[];
 	public static double R;
+	
 	public CvrgDataModel  (double latitudeC,double longitudeC,double heightC,double angle,double dist,double range){
 		this.latitudeC = latitudeC;
 		this.longitudeC = longitudeC;
@@ -73,16 +77,7 @@ public class CvrgDataModel {
 		viewAngle = Math.atan( NEUS[2] /(Math.sqrt( NEUS[0] * NEUS[0]+ NEUS[1] * NEUS[1] )) );
 		return viewAngle;
 	}
-	public double compareConverageAngle(double lastAngle,double thisAngle) {
-		double Temp;
-		if(lastAngle < thisAngle) {
-			Temp = thisAngle;
-		}
-		else {
-			Temp = lastAngle;
-		}
-		return Temp;
-	}
+	
 	public boolean judgeConverage(double limitAngle,int i) {
 		boolean judge = false;
 		//System.out.println("limitAngle"+limitAngle);
@@ -162,6 +157,7 @@ public class CvrgDataModel {
 	public double getPowerRange(double gain,double range) {
 		return Math.sqrt( gain/ 2.7001)*range;
 	}
+	
 }
 
 
